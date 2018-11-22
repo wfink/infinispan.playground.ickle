@@ -22,8 +22,10 @@ public class EmployeeMarshaller implements MessageMarshaller<Employee> {
     int id = reader.readInt("id");
     String name = reader.readString("name");
     String email = reader.readString("email");
+    Integer age = reader.readInt("age");
+    boolean engaged = reader.readBoolean("engaged");
 
-    return new Employee(id, name, email);
+    return new Employee(id, name, email, age, engaged);
   }
 
   @Override
@@ -31,5 +33,7 @@ public class EmployeeMarshaller implements MessageMarshaller<Employee> {
     writer.writeInt("id", employee.getId());
     writer.writeString("name", employee.getName());
     writer.writeString("email", employee.getEmail());
+    writer.writeInt("age", employee.getAge());
+    writer.writeBoolean("engaged", employee.isEngaged());
   }
 }

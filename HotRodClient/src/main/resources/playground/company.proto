@@ -24,4 +24,10 @@ message Employee {
 
    /* @Field */
    optional string email = 3;
+   
+   /* @Field */
+   optional int32 age = 4;
+   
+   /* @Field */
+   required bool engaged = 5;
 }

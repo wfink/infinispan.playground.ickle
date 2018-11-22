@@ -111,8 +111,8 @@ public class CompanyQueryHotRodClient {
   private void insertCompanies() {
     System.out.println("Inserting Messages into cache...");
     Company c = new Company(1, "Red Hat", true);
-    c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com"));
-    c.getEmployees().add(new Employee(2, "William", "m@redhat.com"));
+    c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com", 127, true));
+    c.getEmployees().add(new Employee(2, "William", "m@redhat.com", 17, true));
     messageCache.put("1", c);
     c = new Company(2, "JBoss", false);
     c.getEmployees().add(new Employee(3, "Adrian Brock", "ab@jboss.org"));
@@ -128,6 +128,8 @@ public class CompanyQueryHotRodClient {
 
     runIckleQuery(qf, "from playground.Company c where c.isStockCompany = false");
     runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink'");
+    runIckleQuery(qf, "from playground.Company c where c.employee.age > 100");
+    runIckleQuery(qf, "from playground.Company c where c.employee.engaged = true");
   }
 
   private void stop() {
