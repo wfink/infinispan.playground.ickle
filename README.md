@@ -53,3 +53,14 @@ Build and Run the example
     Running in a cluster might need some adjustments to the index configuration as the index need to be build different and shared.
 
    You might noticed that the query with "text : '*Ickle*'" will not find any, this is related to a bug in 9.4 https://issues.jboss.org/browse/ISPN-9494
+
+
+
+   CompanyQueryHotRodClient
+ 
+     This example use a simple String key to store a Company object with inner list of Employees.
+     The client use Ickle queries to demonstrate how to access the list and use queries to match an attribute of the inner object.
+
+     Before runing it add the following cache configuration to the default configuration
+
+       <*-cache name="IcklePlayCompanyCache"/>

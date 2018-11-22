@@ -1,0 +1,27 @@
+package playground;
+
+/* @Indexed */
+message Company {
+   /* @Field(index = Index.NO, store = Store.NO) */
+   required int32 id = 1;
+
+   /* @Field(store = Store.YES) */
+   required string name = 2;
+
+   /* @Field */
+   optional bool isStockCompany = 3;
+
+   /* @Field(index = Index.YES, store = Store.NO) */
+   repeated Employee employee = 4;
+}
+
+message Employee {
+   /* @Field(index = Index.NO, store = Store.NO) */
+   required int32 id = 1;
+
+   /* @Field(store = Store.YES) */
+   required string name = 2;
+
+   /* @Field */
+   optional string email = 3;
+}
