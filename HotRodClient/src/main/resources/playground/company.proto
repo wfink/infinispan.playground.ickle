@@ -15,17 +15,18 @@ message Company {
    repeated Employee employee = 4;
 }
 
+/* @Indexed */
 message Employee {
    /* @Field(index = Index.NO, store = Store.NO) */
    required int32 id = 1;
 
-   /* @Field(store = Store.YES) */
+   /* @Field(index = Index.YES, store = Store.YES) */
    required string name = 2;
 
    /* @Field */
    optional string email = 3;
    
-   /* @Field */
+   /* @Field(index = Index.YES) */
    optional int32 age = 4;
    
    /* @Field */
