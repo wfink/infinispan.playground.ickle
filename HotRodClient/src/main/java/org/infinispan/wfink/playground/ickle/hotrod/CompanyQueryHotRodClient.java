@@ -129,7 +129,15 @@ public class CompanyQueryHotRodClient {
     runIckleQuery(qf, "from playground.Company c where c.isStockCompany = false");
     runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink'");
     runIckleQuery(qf, "from playground.Company c where c.employee.age > 100");
+    // example for boolean query; without "=true" it might have not the expected result
     runIckleQuery(qf, "from playground.Company c where c.employee.engaged = true");
+    // example for embedded object check; which is not as expected due to https://issues.jboss.org/browse/ISPN-9766
+    runIckleQuery(qf, "from playground.Company c where c.employee is not empty");
+    runIckleQuery(qf, "from playground.Company c where c.employee is empty");
+    // example of differences between Lucene and RDBMS queries
+    // this query return "RedHat" because the relation of employee name AND age is lost
+    // because the engine store a flat structure
+    runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink' and c.employee.age < 100");
   }
 
   private void stop() {
