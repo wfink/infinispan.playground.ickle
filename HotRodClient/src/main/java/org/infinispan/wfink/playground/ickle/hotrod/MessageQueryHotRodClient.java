@@ -83,9 +83,9 @@ public class MessageQueryHotRodClient {
   private void insertMessages() {
     System.out.println("Inserting Messages into cache...");
     messageCache.put("1", new Message(1, "First message for Ickle query", "Wolf", "Gustavo"));
-    messageCache.put("2", new Message(1, "Second message for Ickle query", "Wolf", "Adrian"));
-    messageCache.put("3", new Message(1, "A notification", "Wolf", "Tristan"));
-    messageCache.put("4", new Message(1, "Another message", "Wolf", "Pedro"));
+    messageCache.put("2", new Message(2, "Second message for Ickle query", "Wolf", "Adrian"));
+    messageCache.put("3", new Message(3, "A notification", "Wolf", "Tristan"));
+    messageCache.put("4", new Message(4, "Another message", "Wolf", "Pedro"));
   }
 
   private void findMessages() {
