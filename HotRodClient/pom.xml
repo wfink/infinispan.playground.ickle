@@ -27,7 +27,6 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-remote</artifactId>
-            <version>${version.org.infinispan}</version>
         </dependency>
     </dependencies>
 
