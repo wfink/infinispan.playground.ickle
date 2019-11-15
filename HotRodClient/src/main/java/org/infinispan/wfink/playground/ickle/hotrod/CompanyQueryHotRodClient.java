@@ -24,7 +24,7 @@ public class CompanyQueryHotRodClient {
   private static final String PROTOBUF_DEFINITION_COMPANY = "/playground/company.proto";
 
   private RemoteCacheManager remoteCacheManager;
-  private RemoteCache<String, Company> messageCache;
+  private RemoteCache<Integer, Company> companyCache;
 
   public CompanyQueryHotRodClient(String host, String port, String cacheName) {
     ConfigurationBuilder remoteBuilder = new ConfigurationBuilder();
@@ -32,9 +32,9 @@ public class CompanyQueryHotRodClient {
     .marshaller(new ProtoStreamMarshaller());  // The Protobuf based marshaller is required for query capabilities
 
     remoteCacheManager = new RemoteCacheManager(remoteBuilder.build());
-    messageCache = remoteCacheManager.getCache(cacheName);
+    companyCache = remoteCacheManager.getCache(cacheName);
 
-    if (messageCache == null) {
+    if (companyCache == null) {
       throw new RuntimeException("Cache '" + cacheName + "' not found. Please make sure the server is properly configured");
     }
 
@@ -113,18 +113,21 @@ public class CompanyQueryHotRodClient {
     Company c = new Company(1, "Red Hat", true);
     c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com", 127, true));
     c.getEmployees().add(new Employee(2, "William", "m@redhat.com", 17, true));
-    messageCache.put("1", c);
+    companyCache.put(c.getId(), c);
     c = new Company(2, "JBoss", false);
     c.getEmployees().add(new Employee(3, "Adrian Brock", "ab@jboss.org"));
     c.getEmployees().add(new Employee(4, "Scott Stark", "sst@jboss.org"));
-    messageCache.put("2", c);
-    messageCache.put("3", new Company(3, "Microsoft", true));
-    messageCache.put("4", new Company(4, "SAP", true));
-    messageCache.put("5", new Company(4, "Orga Systems", false));
+    companyCache.put(c.getId(), c);
+    c = new Company(3, "Microsoft", true);
+    companyCache.put(c.getId(), c);
+    c = new Company(4, "SAP", true);
+    companyCache.put(c.getId(), c);
+    c = new Company(5, "Orga Systems", false);
+    companyCache.put(c.getId(), c);
   }
 
   private void findCompanies() {
-    QueryFactory qf = Search.getQueryFactory(messageCache);
+    QueryFactory qf = Search.getQueryFactory(companyCache);
 
     runIckleQuery(qf, "from playground.Company c where c.isStockCompany = false");
     runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink'");
@@ -138,6 +141,7 @@ public class CompanyQueryHotRodClient {
     // this query return "RedHat" because the relation of employee name AND age is lost
     // because the engine store a flat structure
     runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink' and c.employee.age < 100");
+    runIckleQuery(qf, "from playground.Company c where c.employee.name in ('William') and c.name = 'JBoss'");
   }
 
   private void stop() {
@@ -154,6 +158,9 @@ public class CompanyQueryHotRodClient {
     }
     if (args.length > 1) {
       port = args[1];
+    }
+    if (args.length > 2) {
+      cacheName = args[2];
     }
     CompanyQueryHotRodClient client = new CompanyQueryHotRodClient(host, port, cacheName);
 
