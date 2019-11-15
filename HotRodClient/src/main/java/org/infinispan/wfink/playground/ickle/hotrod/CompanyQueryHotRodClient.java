@@ -3,7 +3,10 @@ package org.infinispan.wfink.playground.ickle.hotrod;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -144,6 +147,22 @@ public class CompanyQueryHotRodClient {
     runIckleQuery(qf, "from playground.Company c where c.employee.name in ('William') and c.name = 'JBoss'");
   }
 
+  private void removeNonStockCompanyIds() {
+    QueryFactory qf = Search.getQueryFactory(companyCache);
+    List<Object[]> keys = qf.create("select c.id from playground.Company c where c.isStockCompany = false").list();
+
+    Set<Integer> deleteList = new HashSet<>();
+    for (Object[] key : keys) {
+      deleteList.add((Integer) key[0]);
+    }
+    System.out.println("Old style result is " + deleteList);
+
+    deleteList = qf.create("select c.id from playground.Company c where c.isStockCompany = false").<Object[]>list().stream().map(row -> (Integer) row[0]).collect(Collectors.toSet());
+    System.out.println("Stream result is " + deleteList);
+
+    companyCache.keySet().removeAll(deleteList);
+  }
+
   private void stop() {
     remoteCacheManager.stop();
   }
@@ -165,6 +184,9 @@ public class CompanyQueryHotRodClient {
     CompanyQueryHotRodClient client = new CompanyQueryHotRodClient(host, port, cacheName);
 
     client.insertCompanies();
+    client.findCompanies();
+
+    client.removeNonStockCompanyIds();
     client.findCompanies();
 
     client.stop();
