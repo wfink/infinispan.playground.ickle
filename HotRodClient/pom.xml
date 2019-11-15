@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.infinispan.wfink.playground</groupId>
         <artifactId>Ickle</artifactId>
-        <version>1.0</version>
+        <version>2.0</version>
     </parent>
     <licenses>
         <license>
@@ -26,7 +26,15 @@
 <!--    Use dependency to the remote ueber.jar (if the build Manifest Dependencies are removed scope need to be changed here) -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-remote</artifactId>
+            <artifactId>infinispan-client-hotrod</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query-dsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-remote-query-client</artifactId>
         </dependency>
     </dependencies>
 
