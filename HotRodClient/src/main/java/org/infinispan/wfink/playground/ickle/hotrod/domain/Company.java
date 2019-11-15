@@ -1,6 +1,7 @@
 package org.infinispan.wfink.playground.ickle.hotrod.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,9 +16,11 @@ public class Company {
   private String name;
   private List<Employee> employees;
   private Boolean isStockCompany = Boolean.FALSE;
+  private Date created;
 
   public Company() {
     employees = new ArrayList<Employee>();
+    created = new Date();
   }
 
   public Company(int id, String name, Boolean isStockCompany) {
@@ -59,13 +62,16 @@ public class Company {
     this.isStockCompany = isStockCompany;
   }
 
+  public Date getCreated() {
+    return created;
+  }
+
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+
   @Override
   public String toString() {
-    return "Company[" +
-        "id=" + id +
-        ", name='" + name +
-        ", stock =" + isStockCompany +
-        ", employees " + employees.size() +
-        ']';
+    return "Company [id=" + id + ", name=" + name + ", employees=" + employees + ", isStockCompany=" + isStockCompany + ", created=" + created + "]";
   }
 }

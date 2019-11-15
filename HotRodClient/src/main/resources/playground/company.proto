@@ -13,6 +13,9 @@ message Company {
 
    /* @Field(index = Index.YES, store = Store.NO) */
    repeated Employee employee = 4;
+   
+   /* @Field(index = Index.YES, store = Store.NO) */
+   required int64 created = 5;
 }
 
 /* @Indexed */

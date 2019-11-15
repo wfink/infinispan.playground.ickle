@@ -2,6 +2,7 @@ package org.infinispan.wfink.playground.ickle.hotrod.marshaller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.infinispan.protostream.MessageMarshaller;
@@ -26,12 +27,14 @@ public class CompanyMarshaller implements MessageMarshaller<Company> {
     final String name = reader.readString("name");
     final Boolean isStockCompany = reader.readBoolean("isStockCompany");
     final List<Employee> employees = reader.readCollection("employee", new ArrayList<Employee>(), Employee.class);
+    final Date created = new Date(reader.readLong("created"));
 
     Company company = new Company();
     company.setName(name);
     company.setId(id);
     company.setEmployees(employees);
     company.setIsStockCompany(isStockCompany);
+    company.setCreated(created);
     return company;
   }
 
@@ -41,5 +44,6 @@ public class CompanyMarshaller implements MessageMarshaller<Company> {
     writer.writeString("name", company.getName());
     writer.writeBoolean("isStockCompany", company.getIsStockCompany());
     writer.writeCollection("employee", company.getEmployees(), Employee.class);
+    writer.writeLong("created", company.getCreated().getTime());
   }
 }
