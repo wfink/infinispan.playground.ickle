@@ -12,7 +12,8 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
+import org.infinispan.client.hotrod.marshall.MarshallerUtil;
+import org.infinispan.commons.marshall.ProtoStreamMarshaller;
 import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.query.dsl.Query;
@@ -23,6 +24,12 @@ import org.infinispan.wfink.playground.ickle.hotrod.domain.Employee;
 import org.infinispan.wfink.playground.ickle.hotrod.marshaller.CompanyMarshaller;
 import org.infinispan.wfink.playground.ickle.hotrod.marshaller.EmployeeMarshaller;
 
+/**
+ * A simple client which use a proto file to register the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing
+ * enabled it shows that the full-text query will not work without.
+ *
+ * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
+ */
 public class CompanyQueryHotRodClient {
   private static final String PROTOBUF_DEFINITION_COMPANY = "/playground/company.proto";
 
@@ -51,7 +58,7 @@ public class CompanyQueryHotRodClient {
   private void registerSchemasAndMarshallers() {
     // Register entity marshallers on the client side ProtoStreamMarshaller
     // instance associated with the remote cache manager.
-    SerializationContext ctx = ProtoStreamMarshaller.getSerializationContext(remoteCacheManager);
+    SerializationContext ctx = MarshallerUtil.getSerializationContext(remoteCacheManager);
     // register the necessary proto files
     try {
       ctx.registerProtoFiles(FileDescriptorSource.fromResources(PROTOBUF_DEFINITION_COMPANY));

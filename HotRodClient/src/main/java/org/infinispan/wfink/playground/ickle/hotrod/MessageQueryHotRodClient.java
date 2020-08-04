@@ -6,7 +6,8 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
+import org.infinispan.client.hotrod.marshall.MarshallerUtil;
+import org.infinispan.commons.marshall.ProtoStreamMarshaller;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.annotations.ProtoSchemaBuilder;
 import org.infinispan.query.dsl.Query;
@@ -27,7 +28,7 @@ public class MessageQueryHotRodClient {
   public MessageQueryHotRodClient(String host, String port, String cacheName) {
     ConfigurationBuilder remoteBuilder = new ConfigurationBuilder();
     remoteBuilder.addServer().host(host).port(Integer.parseInt(port))
-    .marshaller(new ProtoStreamMarshaller()); // The Protobuf based marshaller is required for query capabilities
+                 .marshaller(new ProtoStreamMarshaller()); // The Protobuf based marshaller is required for query capabilities
 
     remoteCacheManager = new RemoteCacheManager(remoteBuilder.build());
     messageCache = remoteCacheManager.getCache(cacheName);
@@ -45,7 +46,7 @@ public class MessageQueryHotRodClient {
   private void registerSchemasAndMarshallers() {
     // Register entity marshallers on the client side ProtoStreamMarshaller
     // instance associated with the remote cache manager.
-    SerializationContext ctx = ProtoStreamMarshaller.getSerializationContext(remoteCacheManager);
+    SerializationContext ctx = MarshallerUtil.getSerializationContext(remoteCacheManager);
 
     // Cache to register the schemas with the server too
     final RemoteCache<String, String> protoMetadataCache = remoteCacheManager.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
@@ -96,8 +97,8 @@ public class MessageQueryHotRodClient {
   private void findMessages() {
     QueryFactory qf = Search.getQueryFactory(messageCache);
 
-    // runIckleQuery(qf, "from playground.Message m where m.author = 'Wolf'");
-    // runIckleQuery(qf, "from playground.Message m where m.reader = 'Gustavo'");
+    runIckleQuery(qf, "from playground.Message m where m.author = 'Wolf'");
+    runIckleQuery(qf, "from playground.Message m where m.reader = 'Gustavo'");
     runIckleQuery(qf, "from playground.Message m where m.text : '*Ickle*'");
     runIckleQuery(qf, "from playground.Message m where m.text : '*ickle*'");
     runIckleQuery(qf, "from playground.Message m where m.text : 'message Ickle query'");
@@ -112,8 +113,7 @@ public class MessageQueryHotRodClient {
   public static void main(String[] args) {
     String host = "localhost";
     String port = "11222";
-    // String cacheName = "IcklePlayMessageCache";
-    String cacheName = "IcklePlayCompanyCache";
+    String cacheName = "IcklePlayMessageCache";
 
     if (args.length > 0) {
       port = args[0];

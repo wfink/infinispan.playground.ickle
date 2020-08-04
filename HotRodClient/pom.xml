@@ -26,7 +26,18 @@
 <!--    Use dependency to the remote ueber.jar (if the build Manifest Dependencies are removed scope need to be changed here) -->
         <dependency>
             <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-client-hotrod</artifactId>
+            <!--
             <artifactId>infinispan-remote</artifactId>
+            -->
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query-dsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-remote-query-client</artifactId>
         </dependency>
     </dependencies>
 
