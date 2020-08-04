@@ -52,9 +52,10 @@ public class MessageQueryHotRodClient {
 
     // generate the message protobuf schema file and marshaller based on the annotations on Message class
     // and register it with the SerializationContext of the client
+    String msgSchemaFile = null;
     try {
       ProtoSchemaBuilder protoSchemaBuilder = new ProtoSchemaBuilder();
-      String msgSchemaFile = protoSchemaBuilder.fileName("message.proto").packageName("playground").addClass(Message.class).build(ctx);
+      msgSchemaFile = protoSchemaBuilder.fileName("message.proto").packageName("playground").addClass(Message.class).build(ctx);
       protoMetadataCache.put("message.proto", msgSchemaFile);
     } catch (Exception e) {
       throw new RuntimeException("Failed to build protobuf definition from 'Message class'", e);
@@ -63,7 +64,7 @@ public class MessageQueryHotRodClient {
     // check for definition error for the registered protobuf schemas
     String errors = protoMetadataCache.get(ProtobufMetadataManagerConstants.ERRORS_KEY_SUFFIX);
     if (errors != null) {
-      throw new IllegalStateException("Some Protobuf schema files contain errors:\n" + errors);
+      throw new IllegalStateException("Some Protobuf schema files contain errors: " + errors + "\nSchema :\n" + msgSchemaFile);
     }
   }
 
@@ -86,17 +87,22 @@ public class MessageQueryHotRodClient {
     messageCache.put("2", new Message(2, "Second message for Ickle query", "Wolf", "Adrian"));
     messageCache.put("3", new Message(3, "A notification", "Wolf", "Tristan"));
     messageCache.put("4", new Message(4, "Another message", "Wolf", "Pedro"));
+    messageCache.put("5", new Message(5, "Another message for Ickle-Query", "Wolf", "Adrian"));
+    messageCache.put("6", new Message(6, "And another message for .Ickle.Query. with dots", "Wolf", "Adrian"));
+    messageCache.put("7", new Message(7, "And another message to check query Ickle will be found", "Wolf", "Adrian"));
+    messageCache.put("8", new Message(8, "And another message to check query MyIckleBla will be found", "Wolf", "Adrian"));
   }
 
   private void findMessages() {
     QueryFactory qf = Search.getQueryFactory(messageCache);
 
-    runIckleQuery(qf, "from playground.Message m where m.author = 'Wolf'");
-    runIckleQuery(qf, "from playground.Message m where m.reader = 'Gustavo'");
+    // runIckleQuery(qf, "from playground.Message m where m.author = 'Wolf'");
+    // runIckleQuery(qf, "from playground.Message m where m.reader = 'Gustavo'");
     runIckleQuery(qf, "from playground.Message m where m.text : '*Ickle*'");
     runIckleQuery(qf, "from playground.Message m where m.text : '*ickle*'");
+    runIckleQuery(qf, "from playground.Message m where m.text : 'message Ickle query'");
     // this will not work as the text field is analyzed for full-text query
-    runIckleQuery(qf, "from playground.Message m where m.text = 'A notification'");
+    // runIckleQuery(qf, "from playground.Message m where m.text = 'A notification'");
   }
 
   private void stop() {
@@ -106,7 +112,8 @@ public class MessageQueryHotRodClient {
   public static void main(String[] args) {
     String host = "localhost";
     String port = "11222";
-    String cacheName = "IcklePlayMessageCache";
+    // String cacheName = "IcklePlayMessageCache";
+    String cacheName = "IcklePlayCompanyCache";
 
     if (args.length > 0) {
       port = args[0];
