@@ -16,8 +16,8 @@ import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.wfink.playground.ickle.hotrod.domain.Message;
 
 /**
- * A simple client which use the Message class with annotations to generate the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing
- * enables it shows that the full-text query will not work without.
+ * A simple client which use the Message class with annotations to generate the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing enables it shows that the full-text query will not work
+ * without.
  *
  * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
  */
@@ -27,8 +27,7 @@ public class MessageQueryHotRodClient {
 
   public MessageQueryHotRodClient(String host, String port, String cacheName) {
     ConfigurationBuilder remoteBuilder = new ConfigurationBuilder();
-    remoteBuilder.addServer().host(host).port(Integer.parseInt(port))
-                 .marshaller(new ProtoStreamMarshaller()); // The Protobuf based marshaller is required for query capabilities
+    remoteBuilder.addServer().host(host).port(Integer.parseInt(port)).marshaller(new ProtoStreamMarshaller()); // The Protobuf based marshaller is required for query capabilities
 
     remoteCacheManager = new RemoteCacheManager(remoteBuilder.build());
     messageCache = remoteCacheManager.getCache(cacheName);
@@ -69,12 +68,12 @@ public class MessageQueryHotRodClient {
     }
   }
 
-  private void runIckleQuery(QueryFactory qf, String query) {
+  private void runIckleQuery4Message(QueryFactory qf, String query) {
     try {
-      Query q = qf.create(query);
-      List<Object> results = q.list();
+      Query<Message> q = qf.create("from playground.Message m where " + query);
+      List<Message> results = q.execute().list();
       System.out.printf("Query %s  : found %d matches\n", query, results.size());
-      for (Object m : results) {
+      for (Message m : results) {
         System.out.println(">> " + m);
       }
     } catch (Exception e) {
@@ -97,13 +96,13 @@ public class MessageQueryHotRodClient {
   private void findMessages() {
     QueryFactory qf = Search.getQueryFactory(messageCache);
 
-    runIckleQuery(qf, "from playground.Message m where m.author = 'Wolf'");
-    runIckleQuery(qf, "from playground.Message m where m.reader = 'Gustavo'");
-    runIckleQuery(qf, "from playground.Message m where m.text : '*Ickle*'");
-    runIckleQuery(qf, "from playground.Message m where m.text : '*ickle*'");
-    runIckleQuery(qf, "from playground.Message m where m.text : 'message Ickle query'");
+    runIckleQuery4Message(qf, "m.author = 'Wolf'");
+    runIckleQuery4Message(qf, "m.reader = 'Gustavo'");
+    runIckleQuery4Message(qf, "m.text : '*Ickle*'");
+    runIckleQuery4Message(qf, "m.text : '*ickle*'");
+    runIckleQuery4Message(qf, "m.text : 'message Ickle query'");
     // this will not work as the text field is analyzed for full-text query
-    // runIckleQuery(qf, "from playground.Message m where m.text = 'A notification'");
+    // runIckleQuery(qf, "m.text = 'A notification'");
   }
 
   private void stop() {

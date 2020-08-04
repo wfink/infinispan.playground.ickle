@@ -25,8 +25,7 @@ import org.infinispan.wfink.playground.ickle.hotrod.marshaller.CompanyMarshaller
 import org.infinispan.wfink.playground.ickle.hotrod.marshaller.EmployeeMarshaller;
 
 /**
- * A simple client which use a proto file to register the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing
- * enabled it shows that the full-text query will not work without.
+ * A simple client which use a proto file to register the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing enabled it shows that the full-text query will not work without.
  *
  * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
  */
@@ -38,8 +37,7 @@ public class CompanyQueryHotRodClient {
 
   public CompanyQueryHotRodClient(String host, String port, String cacheName) {
     ConfigurationBuilder remoteBuilder = new ConfigurationBuilder();
-    remoteBuilder.addServer().host(host).port(Integer.parseInt(port))
-    .marshaller(new ProtoStreamMarshaller());  // The Protobuf based marshaller is required for query capabilities
+    remoteBuilder.addServer().host(host).port(Integer.parseInt(port)).marshaller(new ProtoStreamMarshaller()); // The Protobuf based marshaller is required for query capabilities
 
     remoteCacheManager = new RemoteCacheManager(remoteBuilder.build());
     companyCache = remoteCacheManager.getCache(cacheName);
@@ -52,8 +50,7 @@ public class CompanyQueryHotRodClient {
   }
 
   /**
-   * Register the Protobuf schemas and marshallers with the client and then
-   * register the schemas with the server too.
+   * Register the Protobuf schemas and marshallers with the client and then register the schemas with the server too.
    */
   private void registerSchemasAndMarshallers() {
     // Register entity marshallers on the client side ProtoStreamMarshaller
@@ -67,7 +64,6 @@ public class CompanyQueryHotRodClient {
     }
     ctx.registerMarshaller(new CompanyMarshaller());
     ctx.registerMarshaller(new EmployeeMarshaller());
-
 
     // register the schemas with the server too
     final RemoteCache<String, String> protoMetadataCache = remoteCacheManager.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
@@ -102,10 +98,9 @@ public class CompanyQueryHotRodClient {
     }
   }
 
-
-  private void runIckleQuery(QueryFactory qf, String query) {
-    Query q = qf.create(query);
-    List<Company> results = q.list();
+  private void runIckleQuery4Company(QueryFactory qf, String query) {
+    Query<Company> q = qf.create("from playground.Company c where " + query);
+    List<Company> results = q.execute().list();
     System.out.printf("Query %s  : found %d matches\n", query, results.size());
     for (Company c : results) {
       System.out.println("   " + c);
@@ -139,24 +134,36 @@ public class CompanyQueryHotRodClient {
   private void findCompanies() {
     QueryFactory qf = Search.getQueryFactory(companyCache);
 
-    runIckleQuery(qf, "from playground.Company c where c.isStockCompany = false");
-    runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink'");
-    runIckleQuery(qf, "from playground.Company c where c.employee.age > 100");
+    runIckleQuery4Company(qf, "c.isStockCompany = false");
+    runIckleQuery4Company(qf, "c.employee.name = 'Wolf Fink'");
+    runIckleQuery4Company(qf, "c.employee.age > 100");
     // example for boolean query; without "=true" it might have not the expected result
-    runIckleQuery(qf, "from playground.Company c where c.employee.engaged = true");
+    runIckleQuery4Company(qf, "c.employee.engaged = true");
     // example for embedded object check; which is not as expected due to https://issues.jboss.org/browse/ISPN-9766
-    runIckleQuery(qf, "from playground.Company c where c.employee is not empty");
-    runIckleQuery(qf, "from playground.Company c where c.employee is empty");
+    runIckleQuery4Company(qf, "c.employee is not empty");
+    runIckleQuery4Company(qf, "c.employee is empty");
     // example of differences between Lucene and RDBMS queries
     // this query return "RedHat" because the relation of employee name AND age is lost
     // because the engine store a flat structure
-    runIckleQuery(qf, "from playground.Company c where c.employee.name = 'Wolf Fink' and c.employee.age < 100");
-    runIckleQuery(qf, "from playground.Company c where c.employee.name in ('William') and c.name = 'JBoss'");
+    runIckleQuery4Company(qf, "c.employee.name = 'Wolf Fink' and c.employee.age < 100");
+    runIckleQuery4Company(qf, "c.employee.name in ('William') and c.name = 'JBoss'");
   }
 
   private void removeNonStockCompanyIds() {
     QueryFactory qf = Search.getQueryFactory(companyCache);
-    List<Object[]> keys = qf.create("select c.id from playground.Company c where c.isStockCompany = false").list();
+
+    // as Infinispan 11 implements generics for query a single line will not work as before, so the projection needs to be adjusted
+    // first this is a long example to understand the process in detail
+
+    // Option 1 to get the correct result :
+    List<Object[]> keys = qf.<Object[]>create("select c.id from playground.Company c where c.isStockCompany = false").execute().list();
+
+    // Option 2 :
+    // Query<Object[]> query = qf.create("...");
+    // List<Object[]> list = query.execute().list();
+
+    // Option 3 :
+    // List<Object[]> list = (List<Object[]>) qf.create("...").execute().list();
 
     Set<Integer> deleteList = new HashSet<>();
     for (Object[] key : keys) {
@@ -164,8 +171,10 @@ public class CompanyQueryHotRodClient {
     }
     System.out.println("Old style result is " + deleteList);
 
-    deleteList = qf.create("select c.id from playground.Company c where c.isStockCompany = false").<Object[]>list().stream().map(row -> (Integer) row[0]).collect(Collectors.toSet());
-    System.out.println("Stream result is " + deleteList);
+    // now an example which uses streams to create the list in one line
+
+    deleteList = qf.<Object[]>create("select c.id from playground.Company c where c.isStockCompany = false").execute().list().stream().map(row -> (Integer) row[0]).collect(Collectors.toSet());
+    System.out.println("Stream result is " + deleteList); // this result will be the same as the "Old style" before
 
     companyCache.keySet().removeAll(deleteList);
   }
