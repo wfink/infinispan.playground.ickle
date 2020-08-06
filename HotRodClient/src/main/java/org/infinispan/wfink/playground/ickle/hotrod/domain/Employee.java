@@ -1,8 +1,9 @@
 package org.infinispan.wfink.playground.ickle.hotrod.domain;
 
 /**
+ * Cache entry class without annotation. A .proto file need to define the fields and a Marshaller is needed as well. Note that the sequence of fields need to have the correct order in .proto and Marshaller for best performance. A PROTOSTREAM warning will be logged otherwise.
  *
- * @author Wolf Dieter Fink
+ * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
  */
 public class Employee {
 
@@ -18,6 +19,7 @@ public class Employee {
   public Employee(int id, String name, String email) {
     this(id, name, email, null, true);
   }
+
   public Employee(int id, String name, String email, Integer age, boolean engaged) {
     this.id = id;
     this.name = name;
@@ -68,12 +70,6 @@ public class Employee {
 
   @Override
   public String toString() {
-    return "Person{" +
-        "id=" + id +
-        ", name='" + name +
-        ", age='" + age +
-        ", engaged='" + isEngaged +
-        ", email=" + email +
-        "]";
+    return "Person{" + "id=" + id + ", name='" + name + ", age='" + age + ", engaged='" + isEngaged + ", email=" + email + "]";
   }
 }

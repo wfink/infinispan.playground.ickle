@@ -5,6 +5,15 @@ import java.io.IOException;
 import org.infinispan.protostream.MessageMarshaller;
 import org.infinispan.wfink.playground.ickle.hotrod.domain.Employee;
 
+/**
+ * Implementation of a Message Marshaller for Protobuf to be used with *.proto files. The Cache entry class is without annotations for Protobuf in this case. All Field and Index configuration is included within the *.proto file. Note that the sequence of fields need to have the correct order in
+ * .proto and Marshaller for best performance. A PROTOSTREAM warning will be logged otherwise.
+ *
+ * As the MessageMarshaller is marked as deprecated it is recommended to use the approach with annotated Java classes and use the ProtoSchemaBuilder to generate the proto information and Marshaller. The MessageMarshaller will not be removed until there is an alternative way.
+ *
+ * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
+ */
+@SuppressWarnings("deprecation")
 public class EmployeeMarshaller implements MessageMarshaller<Employee> {
 
   @Override

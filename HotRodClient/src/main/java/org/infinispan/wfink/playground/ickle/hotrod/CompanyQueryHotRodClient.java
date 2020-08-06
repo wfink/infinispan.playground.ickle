@@ -16,6 +16,7 @@ import org.infinispan.client.hotrod.marshall.MarshallerUtil;
 import org.infinispan.commons.marshall.ProtoStreamMarshaller;
 import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
+import org.infinispan.protostream.annotations.ProtoSchemaBuilder;
 import org.infinispan.query.dsl.Query;
 import org.infinispan.query.dsl.QueryFactory;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
@@ -25,7 +26,8 @@ import org.infinispan.wfink.playground.ickle.hotrod.marshaller.CompanyMarshaller
 import org.infinispan.wfink.playground.ickle.hotrod.marshaller.EmployeeMarshaller;
 
 /**
- * A simple client which use a proto file to register the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing enabled it shows that the full-text query will not work without.
+ * A simple client which use a proto file to register the schema and marshaller for Protobuf. The queries are using a simple field and one analyzed for full-text search. If the server side cache does not have Indexing enabled it shows that the full-text query will not work without. This is an
+ * example how to use *.proto file and MessageMarshaller implementations to configure protobuf. This has been deprecated and the {@link ProtoSchemaBuilder} should be used to generate the resources from the annotations within the Java Pojos.
  *
  * @author <a href="mailto:WolfDieter.Fink@gmail.com">Wolf-Dieter Fink</a>
  */
