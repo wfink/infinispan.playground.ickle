@@ -28,6 +28,9 @@
 
         <!-- Infinispan -->
         <version.org.infinispan>11.0.1.Final</version.org.infinispan>
+        <!-- JDG 7.3.6
+        <version.org.infinispan>9.4.19.Final-redhat-00001</version.org.infinispan>
+        -->
         <!-- JDG 7.2.3
         <version.org.infinispan>8.5.3.Final-redhat-00002</version.org.infinispan>
         -->

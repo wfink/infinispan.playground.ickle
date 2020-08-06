@@ -41,7 +41,7 @@ public class Message {
     this.id = id;
   }
 
-  @ProtoDoc("@Field(store = Store.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition= \"standard\"))")
+  @ProtoDoc("@Field(store = Store.YES, index=Index.YES, analyze = Analyze.YES, analyzer = @Analyzer(definition= \"standard\"))")
   @ProtoField(number = 2)
   public String getText() {
     return text;
