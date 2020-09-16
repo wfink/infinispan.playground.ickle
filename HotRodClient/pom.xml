@@ -54,6 +54,15 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <version>${exec.plugin.version}</version>
+              <configuration>
+		<skip>false</skip>
+                <mainClass>org.infinispan.wfink.playground.ickle.hotrod.MessageContinuousQueryHotRodClient</mainClass>
+              </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

@@ -18,7 +18,7 @@ This example demonstrates how to use a server side Filter to retrieve only the e
 
 Prepare a server instance
 -------------
-Simple start a Infinispan or JDG server and add the following cache.
+Simple start a Infinispan 10+ or RHDG 8+ server and add the following cache.
 
 Build and Run the example
 -------------------------
@@ -33,11 +33,9 @@ Build and Run the example
      This example use a simple String key with the Message.id to store different messages.
      The client use Ickle queries to demonstrate simple queries to match an attribute or use analyzed fields.
 
-     Before runing it add the following cache configuration to the default configuration
+     Before runing it add the following cache configuration to the infinispan.xml configuration
 
-       If standalone.xml (not clustered) is used
-         <local-cache name="IcklePlayMessageCache"/>
-       If clustered.xml is used
+         <replicated-cache name="IcklePlayCompanyCache"/>
          <replicated-cache name="IcklePlayMessageCache"/>
 
      Note that we don't use an Indexed cache here, so the query can be slow.
@@ -46,7 +44,11 @@ Build and Run the example
      Change the configuration as followed:
 
         <*-cache name="IcklePlayMessageCache">
-          <indexing index="ALL" auto-config="true"/>
+          <indexing>
+            <indexed-entities>
+              <indexed-entity>playground.Message</indexed-entity>
+            </indexed-entities>
+          </indexing>
         </*-cache>
 
     After the change the full-text is working, but note that the query will only work without a cluster correctly.
@@ -63,4 +65,22 @@ Build and Run the example
 
      Before runing it add the following cache configuration to the default configuration
 
-       <*-cache name="IcklePlayCompanyCache"/>
+        <*-cache name="IcklePlayCompanyCache">
+          <indexing>
+            <indexed-entities>
+              <indexed-entity>playground.Company</indexed-entity>
+            </indexed-entities>
+          </indexing>
+        </*-cache>
+
+3. Use Maven to start a client with a continuous query example
+
+   MessageContinuousQueryHotRodClient
+
+  Start one or more clients with
+
+       maven exec:java
+
+  The client is able to add and list messages in cache. 
+  Register a ContinuousQuery for a reader with 'register' and start another instance to add, update and remove messages.
+  The registered ContinuousQuery listener will show each change which match the reader.
