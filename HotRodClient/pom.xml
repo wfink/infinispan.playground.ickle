@@ -60,7 +60,7 @@
               <version>${exec.plugin.version}</version>
               <configuration>
 		<skip>false</skip>
-                <mainClass>org.infinispan.wfink.playground.ickle.hotrod.MessageContinuousQueryHotRodClient</mainClass>
+                <mainClass>org.infinispan.wfink.playground.ickle.hotrod.PerfQueryTest</mainClass>
               </configuration>
             </plugin>
         </plugins>
