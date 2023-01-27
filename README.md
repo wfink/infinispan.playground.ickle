@@ -26,17 +26,17 @@ Build and Run the example
 
         mvn clean package
 
+     Before runing it add the following cache configuration to the infinispan.xml configuration
+
+         <replicated-cache name="IcklePlayCompanyCache"/>
+         <replicated-cache name="IcklePlayMessageCache"/>
+
 2. Use java command or an IDE to start a simple example
 
    MessageQueryHotRodClient
  
      This example use a simple String key with the Message.id to store different messages.
      The client use Ickle queries to demonstrate simple queries to match an attribute or use analyzed fields.
-
-     Before runing it add the following cache configuration to the infinispan.xml configuration
-
-         <replicated-cache name="IcklePlayCompanyCache"/>
-         <replicated-cache name="IcklePlayMessageCache"/>
 
      Note that we don't use an Indexed cache here, so the query can be slow.
      As a result the client will fail to use a full-text query for the 'text' field.
@@ -53,8 +53,6 @@ Build and Run the example
 
     After the change the full-text is working, but note that the query will only work without a cluster correctly.
     Running in a cluster might need some adjustments to the index configuration as the index need to be build different and shared.
-
-   You might noticed that the query with "text : '*Ickle*'" will not find any, this is related to a bug in 9.4 https://issues.jboss.org/browse/ISPN-9494
 
 
 
@@ -83,4 +81,4 @@ Build and Run the example
 
   The client is able to add and list messages in cache. 
   Register a ContinuousQuery for a reader with 'register' and start another instance to add, update and remove messages.
-  The registered ContinuousQuery listener will show each change which match the reader.
+  The registered ContinuousQuery listener will show each change which match the reader with prefix NEW/DELETED/UPDATED.
