@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.infinispan.wfink.playground</groupId>
+        <artifactId>Ickle</artifactId>
+        <version>1.0</version>
+    </parent>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <distribution>repo</distribution>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
+
+    <artifactId>Ickle-HotRod-NativeIndexAnnotation</artifactId>
+
+    <name>Ickle: HotRod client application with protobuf and NativeIndex annotations</name>
+
+    <url>http://maven.apache.org</url>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-client-hotrod</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query-dsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-remote-query-client</artifactId>
+        </dependency>
+        <!--  this is necessary to use the native index annotations (added with ISPN 14) -->
+        <dependency>
+          <groupId>org.infinispan</groupId>
+          <artifactId>infinispan-api</artifactId>
+        </dependency>
+        <dependency>
+            <!-- the protostream processor dependency will trigger the build of marshall classes
+                 and the proto files for the AutoProtoSchemaBuilder
+            -->
+            <groupId>org.infinispan.protostream</groupId>
+            <artifactId>protostream-processor</artifactId>
+            <!--
+              This dependency should be declared in the "provided" scope or made "optional"
+              because it is a compile-only dependency and is not required at runtime.
+              Transitive propagation of this dependency should be also be avoided.
+            -->
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${compiler.plugin.version}</version>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <version>${exec.plugin.version}</version>
+              <configuration>
+		<skip>false</skip>
+              </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

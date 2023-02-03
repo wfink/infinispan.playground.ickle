@@ -18,6 +18,7 @@
     </licenses>
     <modules>
         <module>HotRodClient</module>
+        <module>NativeIndexAnnotation</module>
     </modules>
     <properties>
     <!-- Explicitly declaring the source encoding eliminates the following 

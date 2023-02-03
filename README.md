@@ -18,7 +18,8 @@ This example demonstrates how to use a server side Filter to retrieve only the e
 
 Prepare a server instance
 -------------
-Simple start a Infinispan 10+ or RHDG 8+ server and add the following cache.
+Simple start a Infinispan 10+ or RHDG 8+ server and add the required caches.
+
 
 Build and Run the example
 -------------------------
@@ -82,3 +83,35 @@ Build and Run the example
   The client is able to add and list messages in cache. 
   Register a ContinuousQuery for a reader with 'register' and start another instance to add, update and remove messages.
   The registered ContinuousQuery listener will show each change which match the reader with prefix NEW/DELETED/UPDATED.
+
+
+
+Run the query and indexing example with native index annotations (new with ISPN 14)
+-----------------------------------------------------------------------------------
+
+The project use the @ProtoField and @AutoProtoSchemaBuilder annotations to generate the Context and the proto definition.
+Note that it is not recommended to register the proto schema with any client because of possible inconsistencies.
+The project include the proto schema which can be registered by using the REST interface.
+
+Here we use the native indexing annotations which allow compile time checking instead of the legacy @Field marker inside of Java comments.
+Also the parameters are simplified to not cause issues with projection or analyzing of text fields as the legacy marker properties could lead to missconfiguration
+and weird results.
+
+1. Type this command to build and deploy the archive:
+
+        mvn clean install
+
+2. Create the caches and register the proto definition
+
+        <SERVER>/bin/cli.sh -c -
+          create cache --file=templates/IckleMessageCache.xml IckleMessageCache
+          create cache --file=templates/IckleCompanyCache.xml IckleCompanyCache
+          schema upload --file=templates/message.proto message
+
+3. Run the example clients for Message or Company
+
+       maven exec:java -Dexec.mainClass="org.infinispan.wfink.playground.ickle.hotrod.MessageQueryHotRodClient"
+       maven exec:java -Dexec.mainClass="org.infinispan.wfink.playground.ickle.hotrod.CompanyQueryHotRodClient"
+
+   The output will show the generated proto schema but not push it to the server.
+   Note that an update for the schema at runtime is not possible, the cache(s) needs to be restarted alternatively the server can be restarted.

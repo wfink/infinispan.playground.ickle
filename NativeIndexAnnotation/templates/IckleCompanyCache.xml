@@ -1,0 +1,13 @@
+<infinispan>
+  <cache-container>
+    <distributed-cache name="IckleCompanyCache">
+      <encoding media-type="application/x-protostream"/>
+      <indexing>
+        <indexed-entities>
+          <indexed-entity>playground.Company</indexed-entity>
+         </indexed-entities>
+      </indexing>
+    </distributed-cache>
+  </cache-container>
+</infinispan>
+
