@@ -1,0 +1,36 @@
+// Generated from : org.infinispan.wfink.playground.ickle.hotrod.domain.MessageInitializer
+
+syntax = "proto2";
+
+package playground;
+
+
+
+/**
+ * @Indexed
+ */
+message Message {
+   
+   required int32 id = 1;
+   
+   /**
+    * @Text(analyzer="whitespace")
+    */
+   optional string text = 2;
+   
+   /**
+    * @Basic
+    */
+   optional string author = 3;
+   
+   /**
+    * @Basic
+    */
+   optional string reader = 4;
+   
+   /**
+    * @Basic
+    */
+   optional bool read = 5 [default = false];
+}
+

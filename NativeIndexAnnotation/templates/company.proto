@@ -1,0 +1,58 @@
+// Generated from : org.infinispan.wfink.playground.ickle.hotrod.domain.CompanyInitializer
+
+syntax = "proto2";
+
+package playground;
+
+
+
+/**
+ * @Indexed
+ */
+message Company {
+   
+   required int32 id = 1;
+   
+   /**
+    * @Basic
+    */
+   required string name = 2;
+   
+   /**
+    * @Embedded(includeDepth=1, structure=org.infinispan.api.annotations.indexing.option.Structure.NESTED)
+    */
+   repeated Employee employees = 3;
+   
+   optional bool stockCompany = 4 [default = false];
+   
+   required fixed64 created = 5;
+}
+
+
+message Employee {
+   
+   /**
+    * @Basic
+    */
+   required int32 id = 1;
+   
+   /**
+    * @Basic
+    */
+   required string name = 2;
+   
+   /**
+    * @Basic
+    */
+   optional string email = 3;
+   
+   /**
+    * @Basic
+    */
+   optional int32 age = 4;
+   
+   /**
+    * @Basic
+    */
+   optional bool engaged = 5 [default = false];
+}
