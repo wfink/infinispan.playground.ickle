@@ -17,6 +17,7 @@ public class Employee {
   private String email;
   private Integer age;
   private boolean isEngaged = false;
+  private Company company;
 
   public Employee() {
   }
@@ -31,6 +32,15 @@ public class Employee {
     this.email = email;
     this.age = age;
     this.isEngaged = engaged;
+  }
+
+  public Employee(int id, String name, String email, Integer age, Company company) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.age = age;
+    this.isEngaged = true;
+    this.company = company;
   }
 
   @ProtoField(number = 1, required = true)
@@ -83,8 +93,17 @@ public class Employee {
     this.isEngaged = isEngaged;
   }
 
+  @ProtoField(number = 6)
+  public Company getCompany() {
+    return company;
+  }
+
+  public void setCompany(Company company) {
+    this.company = company;
+  }
+
   @Override
   public String toString() {
-    return "Person{" + "id=" + id + ", name='" + name + ", age='" + age + ", engaged='" + isEngaged + ", email=" + email + "]";
+    return "Person{" + "id=" + id + ", name='" + name + ", age='" + age + ", engaged='" + isEngaged + ", email=" + email + (company != null ? " " + company.getName() : "") + "]";
   }
 }

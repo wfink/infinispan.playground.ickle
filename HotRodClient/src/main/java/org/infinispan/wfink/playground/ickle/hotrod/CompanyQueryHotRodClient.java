@@ -105,18 +105,22 @@ public class CompanyQueryHotRodClient {
     List<Company> results = q.execute().list();
     System.out.printf("Query %s  : found %d matches\n", query, results.size());
     for (Company c : results) {
-      System.out.println("   " + c);
-      if (c.getEmployees().size() > 0) {
-        System.out.println("     Employees:");
-        for (Employee e : c.getEmployees()) {
-          System.out.println("       " + e);
-        }
+      printCompany(c);
+    }
+  }
+
+  private void printCompany(Company c) {
+    System.out.println("   " + c);
+    if (c.getEmployees().size() > 0) {
+      System.out.println("     Employees:");
+      for (Employee e : c.getEmployees()) {
+        System.out.println("       " + e);
       }
     }
   }
 
   private void insertCompanies() {
-    System.out.println("Inserting Messages into cache...");
+    System.out.println("Inserting Companies into cache...");
     Company c = new Company(1, "Red Hat", true);
     c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com", 127, true));
     c.getEmployees().add(new Employee(2, "William", "m@redhat.com", 17, true));
@@ -131,6 +135,17 @@ public class CompanyQueryHotRodClient {
     companyCache.put(c.getId(), c);
     c = new Company(5, "Orga Systems", false);
     companyCache.put(c.getId(), c);
+  }
+
+  private void insertCompanyCircular() {
+    System.out.println("Inserting Companies into cache...");
+    Company c = new Company(1, "Red Hat", true);
+    c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com", 127, c));
+    c.getEmployees().add(new Employee(2, "William", "m@redhat.com", 17, c));
+
+    printCompany(c);
+
+    companyCache.put(1, c);
   }
 
   private void findCompanies() {
@@ -201,11 +216,12 @@ public class CompanyQueryHotRodClient {
     }
     CompanyQueryHotRodClient client = new CompanyQueryHotRodClient(host, port, cacheName);
 
-    client.insertCompanies();
+//  client.insertCompanies();
+    client.insertCompanyCircular();
     client.findCompanies();
 
-    client.removeNonStockCompanyIds();
-    client.findCompanies();
+//    client.removeNonStockCompanyIds();
+//    client.findCompanies();
 
     client.stop();
     System.out.println("\nDone !");

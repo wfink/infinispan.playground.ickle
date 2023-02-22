@@ -34,4 +34,7 @@ message Employee {
    
    /* @Field */
    required bool engaged = 5;
+
+   /* @Field */
+   optional Company company = 6;
 }

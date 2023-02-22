@@ -3,6 +3,7 @@ package org.infinispan.wfink.playground.ickle.hotrod.marshaller;
 import java.io.IOException;
 
 import org.infinispan.protostream.MessageMarshaller;
+import org.infinispan.wfink.playground.ickle.hotrod.domain.Company;
 import org.infinispan.wfink.playground.ickle.hotrod.domain.Employee;
 
 /**
@@ -33,6 +34,7 @@ public class EmployeeMarshaller implements MessageMarshaller<Employee> {
     String email = reader.readString("email");
     Integer age = reader.readInt("age");
     boolean engaged = reader.readBoolean("engaged");
+    Company company = reader.readObject("company", Company.class);
 
     return new Employee(id, name, email, age, engaged);
   }
@@ -44,5 +46,6 @@ public class EmployeeMarshaller implements MessageMarshaller<Employee> {
     writer.writeString("email", employee.getEmail());
     writer.writeInt("age", employee.getAge());
     writer.writeBoolean("engaged", employee.isEngaged());
+    writer.writeObject("company", employee.getCompany(), Company.class);
   }
 }

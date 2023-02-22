@@ -88,12 +88,16 @@ public class CompanyQueryHotRodClient {
     List<Company> results = q.execute().list();
     System.out.printf("Query %s  : found %d matches\n", query, results.size());
     for (Company c : results) {
-      System.out.println("   " + c);
-      if (c.getEmployees().size() > 0) {
-        System.out.println("     Employees:");
-        for (Employee e : c.getEmployees()) {
-          System.out.println("       " + e);
-        }
+      printCompany(c);
+    }
+  }
+
+  private void printCompany(Company c) {
+    System.out.println("   " + c);
+    if (c.getEmployees().size() > 0) {
+      System.out.println("     Employees:");
+      for (Employee e : c.getEmployees()) {
+        System.out.println("       " + e);
       }
     }
   }
@@ -112,6 +116,16 @@ public class CompanyQueryHotRodClient {
     c = new Company(3, "IBM", true);
     companyCache.put(c.getId(), c);
     c = new Company(4, "Microsoft", true);
+    companyCache.put(c.getId(), c);
+  }
+
+  private void insertCompaniesWithCircular() {
+    System.out.println("Inserting Messages into cache...");
+    Company c = new Company(1, "Red Hat", true);
+    c.getEmployees().add(new Employee(1, "Wolf Fink", "wf@redhat.com", 127, c));
+    c.getEmployees().add(new Employee(2, "William", "w@redhat.com", 17, c));
+
+    printCompany(c);
     companyCache.put(c.getId(), c);
   }
 
@@ -183,11 +197,11 @@ public class CompanyQueryHotRodClient {
     }
     CompanyQueryHotRodClient client = new CompanyQueryHotRodClient(host, port, cacheName);
 
-    client.insertCompanies();
+    client.insertCompaniesWithCircular();
     client.findCompanies();
 
-    client.removeNonStockCompanyIds();
-    client.findCompanies();
+//    client.removeNonStockCompanyIds();
+//    client.findCompanies();
 
     client.stop();
     System.out.println("\nDone !");
